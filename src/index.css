@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* small helper so max-height transitions feel smooth */
+.menu-transition {
+  transition: max-height 260ms cubic-bezier(.2,.9,.2,1);
+}
+
+html, body, #root {
+  height: 100%;
+}
