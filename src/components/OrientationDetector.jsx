@@ -1,67 +1,61 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import AlarmClock from "./AlarmClock";
+import Stopwatch from "./Stopwatch";
+import Timer from "./Timer";
+import Weather from "./Weather";
 
 export default function OrientationDetector() {
-  const [mode, setMode] = useState("Unknown");
+  const [mode, setMode] = useState("");
+  const [fadeKey, setFadeKey] = useState(0); // Trigger fade animation
 
   useEffect(() => {
-    // Function to map orientation type to human-readable mode
-    const updateModeFromScreen = () => {
-      if (window.screen.orientation) {
-        const type = window.screen.orientation.type;
-        switch (type) {
-          case "portrait-primary":
-            setMode("Portrait Up");
-            break;
-          case "portrait-secondary":
-            setMode("Portrait Down");
-            break;
-          case "landscape-primary":
-            setMode("Landscape Left");
-            break;
-          case "landscape-secondary":
-            setMode("Landscape Right");
-            break;
-          default:
-            setMode("Unknown");
-        }
+    const updateOrientation = () => {
+      const orientation = window.screen.orientation || {};
+      const angle = orientation.angle ?? window.orientation ?? 0;
+      const type = orientation.type ?? "";
+
+      let newMode = "";
+      if (type.includes("portrait") && angle === 0) newMode = "portrait-up";
+      else if (type.includes("portrait") && angle === 180) newMode = "portrait-down";
+      else if (type.includes("landscape") && (angle === 90 || angle === -270))
+        newMode = "landscape-right";
+      else if (type.includes("landscape") && (angle === -90 || angle === 270))
+        newMode = "landscape-left";
+
+      if (newMode !== mode) {
+        setFadeKey((prev) => prev + 1); // Refresh fade animation
+        setMode(newMode);
       }
     };
 
-    // Function to map deviceorientation angles to modes
-    const updateModeFromDevice = (event) => {
-      const { beta, gamma } = event; // beta = front/back tilt, gamma = left/right tilt
+    updateOrientation();
+    window.addEventListener("orientationchange", updateOrientation);
+    return () => window.removeEventListener("orientationchange", updateOrientation);
+  }, [mode]);
 
-      if (Math.abs(beta) < 45) {
-        setMode(gamma > 0 ? "Landscape Left" : "Landscape Right");
-      } else {
-        setMode(beta > 0 ? "Portrait Up" : "Portrait Down");
-      }
-    };
-
-    // Initial check from screen.orientation
-    updateModeFromScreen();
-
-    // Listen for orientation changes
-    window.addEventListener("orientationchange", updateModeFromScreen);
-
-    // Listen for deviceorientation events (more dynamic)
-    window.addEventListener("deviceorientation", updateModeFromDevice);
-
-    // Cleanup on unmount
-    return () => {
-      window.removeEventListener("orientationchange", updateModeFromScreen);
-      window.removeEventListener("deviceorientation", updateModeFromDevice);
-    };
-  }, []);
+  // Background colors for each mode
+  const modeColors = {
+    "portrait-up": "bg-gradient-to-br from-green-500 via-emerald-600 to-green-800",
+    "landscape-left": "bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700",
+    "portrait-down": "bg-gradient-to-br from-yellow-500 via-orange-500 to-red-600",
+    "landscape-right": "bg-gradient-to-br from-sky-500 via-cyan-500 to-teal-600",
+  };
 
   return (
-    <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded shadow mt-6 max-w-md mx-auto">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-        Device Orientation
-      </h3>
-      <p className="text-gray-700 dark:text-gray-300">
-        Current Mode: <span className="font-bold">{mode}</span>
-      </p>
+    <div
+      key={fadeKey}
+      className={`w-full max-w-md mx-auto p-4 rounded-lg shadow-lg text-white transition-opacity duration-500 ease-in-out ${modeColors[mode] || "bg-gray-800"}`}
+    >
+      {mode === "portrait-up" && <AlarmClock />}
+      {mode === "landscape-left" && <Stopwatch />}
+      {mode === "portrait-down" && <Timer />}
+      {mode === "landscape-right" && <Weather />}
+
+      {mode === "" && (
+        <p className="text-center text-gray-200">
+          📱 Rotate your device to explore features.
+        </p>
+      )}
     </div>
   );
 }
