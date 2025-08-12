@@ -1,98 +1,83 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import AlarmClock from "./AlarmClock";
 import Stopwatch from "./Stopwatch";
 import Timer from "./Timer";
 import Weather from "./Weather";
 
-const OrientationDetector = () => {
+export default function OrientationDetector() {
+  const [orientation, setOrientation] = useState("");
   const [mode, setMode] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
 
-  // Detect orientation changes
   useEffect(() => {
-    setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
+    function detectOrientation() {
+      if (window.screen.orientation) {
+        const type = window.screen.orientation.type;
+        updateMode(type);
+      }
+    }
 
-    const handleOrientationChange = () => {
-      const angle = window.screen.orientation?.angle ?? window.orientation ?? 0;
+    function handleDeviceOrientation(event) {
+      // Fallback for iOS Safari
+      if (event.beta !== null && event.gamma !== null) {
+        if (Math.abs(event.gamma) < 10) {
+          setMode("Portrait Up");
+        } else if (event.gamma > 80) {
+          setMode("Landscape Right");
+        } else if (event.gamma < -80) {
+          setMode("Landscape Left");
+        }
+      }
+    }
 
-      if (angle === 0) setMode("portrait-up");
-      else if (angle === 180) setMode("portrait-down");
-      else if (angle === 90) setMode("landscape-right");
-      else if (angle === 270 || angle === -90) setMode("landscape-left");
-    };
+    function updateMode(type) {
+      if (type.includes("portrait-primary")) setMode("Portrait Up");
+      else if (type.includes("portrait-secondary")) setMode("Portrait Down");
+      else if (type.includes("landscape-primary")) setMode("Landscape Right");
+      else if (type.includes("landscape-secondary")) setMode("Landscape Left");
+    }
 
-    window.addEventListener("orientationchange", handleOrientationChange);
-    handleOrientationChange(); // Initial check
+    detectOrientation();
+
+    window.addEventListener("orientationchange", detectOrientation);
+    window.addEventListener("deviceorientation", handleDeviceOrientation);
 
     return () => {
-      window.removeEventListener("orientationchange", handleOrientationChange);
+      window.removeEventListener("orientationchange", detectOrientation);
+      window.removeEventListener("deviceorientation", handleDeviceOrientation);
     };
   }, []);
 
-  // Render based on orientation
-  const renderContent = () => {
+  const renderModeComponent = () => {
     switch (mode) {
-      case "portrait-up":
+      case "Portrait Up":
         return <AlarmClock />;
-      case "portrait-down":
-        return <Timer />;
-      case "landscape-left":
+      case "Landscape Left":
         return <Stopwatch />;
-      case "landscape-right":
+      case "Portrait Down":
+        return <Timer />;
+      case "Landscape Right":
         return <Weather />;
       default:
         return (
-          <div className="text-center text-gray-300 p-4 rounded bg-gray-800/50">
-            📱 Rotate your device to explore features.
-          </div>
+          <p className="text-center mt-6 text-gray-300">
+            📱 Rotate your device to see different features.
+          </p>
         );
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      {renderContent()}
-
-      {/* Desktop Testing Mode Switcher */}
-      {!isMobile && (
-        <div className="mt-8 p-4 rounded-xl bg-gray-800/60 backdrop-blur-md border border-gray-700 shadow-lg max-w-sm">
-          <p className="text-sm text-gray-300 mb-3 text-center">
-            🖥 Desktop Test Mode – Simulate Orientation
-          </p>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setMode("portrait-up")}
-              className="px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all shadow-md"
-            >
-              📱 Portrait Up
-              <span className="block text-xs text-gray-200">Alarm</span>
-            </button>
-            <button
-              onClick={() => setMode("portrait-down")}
-              className="px-3 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 transition-all shadow-md"
-            >
-              🔄 Portrait Down
-              <span className="block text-xs text-gray-200">Timer</span>
-            </button>
-            <button
-              onClick={() => setMode("landscape-left")}
-              className="px-3 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 transition-all shadow-md"
-            >
-              📺 Landscape Left
-              <span className="block text-xs text-gray-200">Stopwatch</span>
-            </button>
-            <button
-              onClick={() => setMode("landscape-right")}
-              className="px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 transition-all shadow-md"
-            >
-              🌤 Landscape Right
-              <span className="block text-xs text-gray-200">Weather</span>
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="p-6 min-h-screen flex flex-col items-center justify-center text-white bg-gradient-to-br from-gray-900 to-black transition-all duration-500">
+      <h1 className="text-3xl font-bold mb-4 text-center drop-shadow-lg">
+        📱 Orientation Detector
+      </h1>
+      <p className="text-gray-400 mb-8">
+        Current Mode:{" "}
+        <span className="text-green-400 font-semibold">{mode || "Detecting..."}</span>
+      </p>
+      <div className="w-full max-w-md p-6 rounded-lg bg-gray-800 shadow-lg animate-fadeIn">
+        {renderModeComponent()}
+      </div>
     </div>
   );
-};
-
-export default OrientationDetector;
+}

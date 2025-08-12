@@ -23,20 +23,43 @@ export default function Stopwatch() {
     setTime(0);
   };
 
+  // Format time to HH:MM:SS
+  const formatTime = (seconds) => {
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${hrs}:${mins}:${secs}`;
+  };
+
   return (
-    <div className="text-center space-y-4">
-      <h2 className="text-2xl font-bold">⏱ Stopwatch</h2>
-      <p className="text-5xl font-mono font-semibold">
-        {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
+    <div className="text-center space-y-6 animate-fadeIn">
+      <h2 className="text-3xl font-bold text-blue-400 drop-shadow">
+        ⏱ Stopwatch
+      </h2>
+
+      {/* Time Display */}
+      <p className="text-6xl font-mono font-semibold text-white">
+        {formatTime(time)}
       </p>
-      <div className="flex gap-3 justify-center">
-        <button onClick={start} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg">
+
+      {/* Buttons */}
+      <div className="flex flex-wrap gap-4 justify-center">
+        <button
+          onClick={start}
+          className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg text-white font-semibold shadow-md transition-all"
+        >
           Start
         </button>
-        <button onClick={stop} className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg">
-          Stop
+        <button
+          onClick={stop}
+          className="bg-yellow-500 hover:bg-yellow-600 px-5 py-2 rounded-lg text-white font-semibold shadow-md transition-all"
+        >
+          Pause
         </button>
-        <button onClick={reset} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg">
+        <button
+          onClick={reset}
+          className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded-lg text-white font-semibold shadow-md transition-all"
+        >
           Reset
         </button>
       </div>

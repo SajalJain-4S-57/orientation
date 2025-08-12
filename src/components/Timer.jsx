@@ -4,17 +4,19 @@ export default function Timer() {
   const [seconds, setSeconds] = useState(0);
   const [input, setInput] = useState("");
   const [running, setRunning] = useState(false);
+  const [finished, setFinished] = useState(false);
   const timerRef = useRef(null);
 
   const start = () => {
     if (seconds > 0 && !running) {
       setRunning(true);
+      setFinished(false);
       timerRef.current = setInterval(() => {
         setSeconds((s) => {
           if (s <= 1) {
             clearInterval(timerRef.current);
             setRunning(false);
-            alert("⏳ Time's up!");
+            setFinished(true);
             return 0;
           }
           return s - 1;
@@ -28,37 +30,72 @@ export default function Timer() {
     setRunning(false);
     setSeconds(0);
     setInput("");
+    setFinished(false);
   };
 
   const handleSet = () => {
     const val = parseInt(input);
-    if (!isNaN(val) && val > 0) setSeconds(val);
+    if (!isNaN(val) && val > 0) {
+      setSeconds(val);
+      setFinished(false);
+    }
+  };
+
+  // Format MM:SS
+  const formatTime = (sec) => {
+    const mins = String(Math.floor(sec / 60)).padStart(2, "0");
+    const secs = String(sec % 60).padStart(2, "0");
+    return `${mins}:${secs}`;
   };
 
   return (
-    <div className="text-center space-y-4">
-      <h2 className="text-2xl font-bold">⏳ Timer</h2>
-      <p className="text-5xl font-mono font-semibold">
-        {Math.floor(seconds / 60)}:{(seconds % 60).toString().padStart(2, "0")}
+    <div className="text-center space-y-6 animate-fadeIn">
+      <h2 className="text-3xl font-bold text-purple-400 drop-shadow">
+        ⏳ Timer
+      </h2>
+
+      {/* Time Display */}
+      <p className="text-6xl font-mono font-semibold text-white">
+        {formatTime(seconds)}
       </p>
+
+      {/* Input for Seconds */}
       <input
         type="number"
-        placeholder="Seconds"
+        placeholder="Enter seconds"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className="bg-gray-900 text-white p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400"
+        className="bg-gray-800 text-white p-3 rounded-lg outline-none focus:ring-2 focus:ring-purple-400 transition-all w-48"
       />
-      <div className="flex gap-3 justify-center">
-        <button onClick={handleSet} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg">
+
+      {/* Buttons */}
+      <div className="flex flex-wrap gap-4 justify-center">
+        <button
+          onClick={handleSet}
+          className="bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-lg text-white font-semibold shadow-md transition-all"
+        >
           Set
         </button>
-        <button onClick={start} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg">
+        <button
+          onClick={start}
+          className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg text-white font-semibold shadow-md transition-all"
+        >
           Start
         </button>
-        <button onClick={reset} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg">
+        <button
+          onClick={reset}
+          className="bg-red-500 hover:bg-red-600 px-5 py-2 rounded-lg text-white font-semibold shadow-md transition-all"
+        >
           Reset
         </button>
       </div>
+
+      {/* Finished Message */}
+      {finished && (
+        <p className="text-lg font-bold text-red-500 animate-pulse mt-3">
+          ⏰ Time's up!
+        </p>
+      )}
     </div>
   );
 }
