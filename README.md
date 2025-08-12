@@ -1,23 +1,52 @@
-# React + Vite
+# 📱 Orientation Detector Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-first, mobile-friendly web application that detects **how a user is holding their mobile device** and displays different features based on orientation:
 
-Currently, two official plugins are available:
+- **Portrait Mode (Upright)** → ⏰ Alarm Clock  
+- **Landscape Mode (Right-Side Up)** → ⏱ Stopwatch  
+- **Portrait Mode (Upside Down)** → ⏳ Timer  
+- **Landscape Mode (Left-Side Up)** → 🌤 Weather of the Day  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Built with **React + Vite + Tailwind CSS** and enhanced using **AI-assisted development**.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Live Demo
+[**View on Vercel**](YOUR_VERCEL_DEPLOYMENT_LINK)
 
-## 📄 AI Prompt History
-This project includes logs of AI prompts used during development for transparency and hackathon judging.  
-You can read them here: [AI Prompt Log](./docs/ai-prompts.md)
+---
 
-## 🤖 AI Tools in Development
-This project actively uses AI tools to accelerate development and design:
-- **ChatGPT / Cursor.ai** → Code generation, debugging, and optimization.
-- **Figma AI plugin** → UI layout generation.
-- **Midjourney** → Custom image creation.
-- Prompt logs with successes/failures are available in [AI Prompt History](./docs/ai-prompts.md).
+## 🛠 Tech Stack
+- **Frontend:** React + Vite
+- **Styling:** Tailwind CSS
+- **API:** OpenWeatherMap (Free Tier)
+- **AI Tools Used:** ChatGPT, Cursor.ai
+- **Hosting:** Vercel
+
+---
+
+## 📂 Features
+1. **Device Orientation Detection** – Detects device orientation and instantly switches between features.
+2. **Alarm Clock** – Set alarms and get alerts when time is reached.
+3. **Stopwatch** – Start, pause, and reset timer.
+4. **Timer** – Countdown from user input with alert when finished.
+5. **Weather Search** – View weather of any city with live search.
+
+---
+
+## ⚡ Quick Start
+
+```bash
+# Clone repo
+git clone https://github.com/SajalJain-4S-57/orientation
+cd orientation
+
+# Install dependencies
+npm install
+
+# Create .env file
+VITE_OPENWEATHER_API_KEY=your_api_key
+VITE_DEFAULT_CITY=your_city_name
+
+# Run development server
+npm run dev
