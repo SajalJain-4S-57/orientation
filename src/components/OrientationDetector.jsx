@@ -9,7 +9,7 @@
         onClick={() => setMode("portrait-up")}
         className="px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all shadow-md"
       >
-        
+
         📱 Portrait Up  
         <span className="block text-xs text-gray-200">Alarm</span>
       </button>
@@ -37,3 +37,4 @@
     </div>
   </div>
 )}
+export default OrientationDetector;
