@@ -12,7 +12,7 @@ Built with **React + Vite + Tailwind CSS** and enhanced using **AI-assisted deve
 ---
 
 ## 🚀 Live Demo
-[**View on Vercel**](YOUR_VERCEL_DEPLOYMENT_LINK)
+[**View on Vercel**](https://orientation-1kqoxa0ze-jsajal8103-6516s-projects.vercel.app/)
 
 ---
 
