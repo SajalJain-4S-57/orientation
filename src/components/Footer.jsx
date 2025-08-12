@@ -6,7 +6,7 @@ export default function Footer() {
           Built with ❤️ using React, Vite, TailwindCSS & AI Assistance
         </p>
         <p className="mt-1">
-          &copy; {new Date().getFullYear()} Your Name. All rights reserved.
+          &copy; {new Date().getFullYear()} Sajal Jain. All rights reserved.
         </p>
       </div>
     </footer>

@@ -9,7 +9,7 @@ export default function Navbar() {
 
         {/* GitHub Link or Any Call-to-Action */}
         <a
-          href="https://github.com/yourusername/yourrepo"
+          href="https://github.com/SajalJain-4S-57/orientation"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-white text-sm transition"

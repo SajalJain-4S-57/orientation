@@ -68,9 +68,6 @@ export default function OrientationDetector() {
 
   return (
     <div className="p-6 min-h-screen flex flex-col items-center justify-center text-white bg-gradient-to-br from-gray-900 to-black transition-all duration-500">
-      <h1 className="text-3xl font-bold mb-4 text-center drop-shadow-lg">
-        📱 Orientation Detector
-      </h1>
       <p className="text-gray-400 mb-8">
         Current Mode:{" "}
         <span className="text-green-400 font-semibold">{mode || "Detecting..."}</span>

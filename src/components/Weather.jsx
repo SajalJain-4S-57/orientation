@@ -1,80 +1,82 @@
 import { useState, useEffect } from "react";
 
 export default function Weather() {
+  const [city, setCity] = useState(import.meta.env.VITE_DEFAULT_CITY || "Indore");
+  const [inputCity, setInputCity] = useState("");
   const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
-  const city = import.meta.env.VITE_DEFAULT_CITY;
+
+  const fetchWeather = (cityName) => {
+    if (!cityName) return;
+    setLoading(true);
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`)
+      .then((res) => res.json())
+      .then((data) => {
+        setLoading(false);
+        if (data.cod === 200) {
+          setWeather(data);
+          setCity(cityName);
+          setInputCity(""); // Auto-clear input
+        } else {
+          alert("❌ City not found. Please try again.");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
-    async function fetchWeather() {
-      try {
-        const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
-        );
-        if (!res.ok) throw new Error("Failed to fetch weather");
-        const data = await res.json();
-        setWeather(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    fetchWeather(city);
+  }, []);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent UI glitch
+      fetchWeather(inputCity);
     }
-    fetchWeather();
-  }, [city, apiKey]);
-
-  if (loading) {
-    return (
-      <p className="text-center text-gray-300 animate-pulse mt-6">
-        🌦 Loading weather...
-      </p>
-    );
-  }
-
-  if (error) {
-    return (
-      <p className="text-center text-red-500 mt-6">
-        ❌ {error}
-      </p>
-    );
-  }
-
-  if (!weather) return null;
+  };
 
   return (
-    <div className="text-center space-y-6 animate-fadeIn">
-      {/* City Name */}
-      <h2 className="text-3xl font-bold text-yellow-300 drop-shadow">
-        🌤 Weather in {weather.name}
-      </h2>
+    <div className="text-center space-y-4 animate-fadeIn">
+      <h2 className="text-2xl font-bold">🌤 Weather in {city}</h2>
 
-      {/* Weather Icon */}
-      {weather.weather && weather.weather[0] && (
-        <img
-          src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
-          alt={weather.weather[0].description}
-          className="mx-auto"
+      <div className="flex justify-center gap-2">
+        <input
+          type="text"
+          placeholder="Enter city name"
+          value={inputCity}
+          onChange={(e) => setInputCity(e.target.value)}
+          onKeyDown={handleKeyPress}
+          className="bg-gray-900 text-white px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-yellow-400"
         />
+        <button
+          onClick={() => fetchWeather(inputCity)}
+          className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg"
+        >
+          Search
+        </button>
+      </div>
+
+      {loading ? (
+        <p className="text-gray-400">Loading weather...</p>
+      ) : weather ? (
+        <>
+          <p className="capitalize text-lg">{weather.weather[0].description}</p>
+          <p className="text-5xl font-semibold">{weather.main.temp}°C</p>
+          <img
+            src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+            alt="Weather Icon"
+            className="mx-auto"
+          />
+          <p className="text-sm">Feels like: {weather.main.feels_like}°C</p>
+          <p className="text-sm">Humidity: {weather.main.humidity}%</p>
+        </>
+      ) : (
+        <p className="text-gray-400">No weather data available</p>
       )}
-
-      {/* Description */}
-      <p className="capitalize text-lg text-gray-200">
-        {weather.weather[0].description}
-      </p>
-
-      {/* Temperature */}
-      <p className="text-5xl font-semibold text-white">
-        {Math.round(weather.main.temp)}°C
-      </p>
-
-      {/* Additional Info */}
-      <p className="text-gray-300">
-        Feels like: {Math.round(weather.main.feels_like)}°C | Humidity:{" "}
-        {weather.main.humidity}%
-      </p>
     </div>
   );
 }
