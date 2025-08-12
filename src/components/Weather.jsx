@@ -29,8 +29,11 @@ export default function Weather() {
   };
 
   useEffect(() => {
-    fetchWeather(city);
-  }, []);
+  fetch(`/api/weather?city=${city}`)
+    .then((res) => res.json())
+    .then((data) => setWeather(data))
+    .catch((err) => console.error(err));
+}, [city]);
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
