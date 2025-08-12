@@ -1,61 +1,38 @@
-import { useState, useEffect } from "react";
-import AlarmClock from "./AlarmClock";
-import Stopwatch from "./Stopwatch";
-import Timer from "./Timer";
-import Weather from "./Weather";
-
-export default function OrientationDetector() {
-  const [mode, setMode] = useState("");
-  const [fadeKey, setFadeKey] = useState(0); // Trigger fade animation
-
-  useEffect(() => {
-    const updateOrientation = () => {
-      const orientation = window.screen.orientation || {};
-      const angle = orientation.angle ?? window.orientation ?? 0;
-      const type = orientation.type ?? "";
-
-      let newMode = "";
-      if (type.includes("portrait") && angle === 0) newMode = "portrait-up";
-      else if (type.includes("portrait") && angle === 180) newMode = "portrait-down";
-      else if (type.includes("landscape") && (angle === 90 || angle === -270))
-        newMode = "landscape-right";
-      else if (type.includes("landscape") && (angle === -90 || angle === 270))
-        newMode = "landscape-left";
-
-      if (newMode !== mode) {
-        setFadeKey((prev) => prev + 1); // Refresh fade animation
-        setMode(newMode);
-      }
-    };
-
-    updateOrientation();
-    window.addEventListener("orientationchange", updateOrientation);
-    return () => window.removeEventListener("orientationchange", updateOrientation);
-  }, [mode]);
-
-  // Background colors for each mode
-  const modeColors = {
-    "portrait-up": "bg-gradient-to-br from-green-500 via-emerald-600 to-green-800",
-    "landscape-left": "bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700",
-    "portrait-down": "bg-gradient-to-br from-yellow-500 via-orange-500 to-red-600",
-    "landscape-right": "bg-gradient-to-br from-sky-500 via-cyan-500 to-teal-600",
-  };
-
-  return (
-    <div
-      key={fadeKey}
-      className={`w-full max-w-md mx-auto p-4 rounded-lg shadow-lg text-white transition-opacity duration-500 ease-in-out ${modeColors[mode] || "bg-gray-800"}`}
-    >
-      {mode === "portrait-up" && <AlarmClock />}
-      {mode === "landscape-left" && <Stopwatch />}
-      {mode === "portrait-down" && <Timer />}
-      {mode === "landscape-right" && <Weather />}
-
-      {mode === "" && (
-        <p className="text-center text-gray-200">
-          📱 Rotate your device to explore features.
-        </p>
-      )}
+{/* Desktop Testing Mode Switcher */}
+{!isMobile && (
+  <div className="mt-8 p-4 rounded-xl bg-gray-800/60 backdrop-blur-md border border-gray-700 shadow-lg">
+    <p className="text-sm text-gray-300 mb-3 text-center">
+      🖥 Desktop Test Mode – Simulate Device Orientation
+    </p>
+    <div className="grid grid-cols-2 gap-3">
+      <button
+        onClick={() => setMode("portrait-up")}
+        className="px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all shadow-md"
+      >
+        📱 Portrait Up  
+        <span className="block text-xs text-gray-200">Alarm</span>
+      </button>
+      <button
+        onClick={() => setMode("portrait-down")}
+        className="px-3 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 transition-all shadow-md"
+      >
+        🔄 Portrait Down  
+        <span className="block text-xs text-gray-200">Timer</span>
+      </button>
+      <button
+        onClick={() => setMode("landscape-left")}
+        className="px-3 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 transition-all shadow-md"
+      >
+        📺 Landscape Left  
+        <span className="block text-xs text-gray-200">Stopwatch</span>
+      </button>
+      <button
+        onClick={() => setMode("landscape-right")}
+        className="px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 transition-all shadow-md"
+      >
+        🌤 Landscape Right  
+        <span className="block text-xs text-gray-200">Weather</span>
+      </button>
     </div>
-  );
-}
+  </div>
+)}
